@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* UECC Design System - Bleu Royal, Blanc, Or */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Couleurs principales UECC */
+    --background: 210 33% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Bleu royal UECC */
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Bleu clair secondaire */
+    --secondary: 214 95% 93%;
+    --secondary-foreground: 221 83% 40%;
+
+    /* Gris doux */
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Or / Accent doré */
+    --accent: 43 74% 58%;
+    --accent-foreground: 35 80% 20%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 85%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.75rem;
+
+    /* Couleurs additionnelles UECC */
+    --gold: 43 74% 58%;
+    --gold-light: 43 80% 85%;
+    --blue-dark: 221 83% 30%;
+    --blue-light: 214 95% 93%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(221, 83%, 40%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43, 74%, 58%) 0%, hsl(35, 80%, 45%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(214, 95%, 97%) 0%, hsl(221, 83%, 97%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(221 83% 53% / 0.1);
+    --shadow-card: 0 10px 40px -10px hsl(221 83% 53% / 0.15);
+    --shadow-button: 0 4px 14px -2px hsl(221 83% 53% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 95% 93%;
+    --sidebar-accent-foreground: 221 83% 40%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 221 83% 53%;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 221 83% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 43 74% 50%;
+    --accent-foreground: 35 80% 95%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 221 83% 60%;
+
+    --gold: 43 74% 50%;
+    --gold-light: 43 60% 30%;
+    --blue-dark: 221 83% 20%;
+    --blue-light: 217 33% 17%;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 221 83% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 221 83% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  .btn-uecc {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold 
+           transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98];
+    box-shadow: var(--shadow-button);
+  }
+
+  .btn-gold {
+    @apply bg-accent text-accent-foreground px-6 py-3 rounded-lg font-semibold 
+           transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .card-uecc {
+    @apply bg-card rounded-xl p-6 border border-border;
+    box-shadow: var(--shadow-card);
+  }
+
+  .input-uecc {
+    @apply w-full px-4 py-3 rounded-lg border border-input bg-background 
+           focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200;
+  }
+
+  .progress-step {
+    @apply w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300;
+  }
+
+  .progress-step-active {
+    @apply bg-primary text-primary-foreground shadow-lg;
+  }
+
+  .progress-step-completed {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  .progress-step-pending {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-dark;
+  }
+}
