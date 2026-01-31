@@ -1,8 +1,15 @@
 import { UseFormReturn } from 'react-hook-form';
-import { RegistrationData } from '@/types/registration';
+import { RegistrationData, CELLULES } from '@/types/registration';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, User, Phone, MapPin } from 'lucide-react';
+import { Mail, User, Phone, MapPin, Calendar, Home } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface StepProps {
   form: UseFormReturn<RegistrationData>;
@@ -75,6 +82,51 @@ const Step1Identity = ({ form }: StepProps) => {
           </div>
         </div>
 
+        {/* Date et lieu de naissance, Ville de résidence - Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className={inputContainerClass}>
+            <Label htmlFor="dateNaissance" className="text-sm font-medium ml-1">Date de naissance *</Label>
+            <Calendar className={iconClass} />
+            <Input
+              id="dateNaissance"
+              type="date"
+              className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30"
+              {...register('dateNaissance')}
+            />
+            {errors.dateNaissance && (
+              <p className="text-destructive text-xs font-medium ml-1">{errors.dateNaissance.message}</p>
+            )}
+          </div>
+
+          <div className={inputContainerClass}>
+            <Label htmlFor="lieuNaissance" className="text-sm font-medium ml-1">Lieu de naissance *</Label>
+            <MapPin className={iconClass} />
+            <Input
+              id="lieuNaissance"
+              placeholder="Ex: Cotonou"
+              className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30"
+              {...register('lieuNaissance')}
+            />
+            {errors.lieuNaissance && (
+              <p className="text-destructive text-xs font-medium ml-1">{errors.lieuNaissance.message}</p>
+            )}
+          </div>
+
+          <div className={inputContainerClass}>
+            <Label htmlFor="villeResidence" className="text-sm font-medium ml-1">Ville de résidence *</Label>
+            <Home className={iconClass} />
+            <Input
+              id="villeResidence"
+              placeholder="Ex: Porto-Novo"
+              className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30"
+              {...register('villeResidence')}
+            />
+            {errors.villeResidence && (
+              <p className="text-destructive text-xs font-medium ml-1">{errors.villeResidence.message}</p>
+            )}
+          </div>
+        </div>
+
         {/* Téléphone & Cellule - Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className={inputContainerClass}>
@@ -83,9 +135,29 @@ const Step1Identity = ({ form }: StepProps) => {
             <Input
               id="telephone"
               type="tel"
-              placeholder="+229 00 00 00 00"
+              inputMode="numeric"
+              placeholder="01 00 00 00"
+              maxLength={10}
+              pattern="01[0-9]{8}"
               className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30"
-              {...register('telephone')}
+              onInput={(e) => {
+                // Only allow numeric characters
+                e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '');
+              }}
+              {...register('telephone', {
+                pattern: {
+                  value: /^01[0-9]{8}$/,
+                  message: 'Le numéro doit commencer par 01 et contenir exactement 10 chiffres'
+                },
+                minLength: {
+                  value: 10,
+                  message: 'Le numéro doit contenir exactement 10 chiffres'
+                },
+                maxLength: {
+                  value: 10,
+                  message: 'Le numéro doit contenir exactement 10 chiffres'
+                }
+              })}
             />
             {errors.telephone && (
               <p className="text-destructive text-xs font-medium ml-1">{errors.telephone.message}</p>
@@ -95,12 +167,21 @@ const Step1Identity = ({ form }: StepProps) => {
           <div className={inputContainerClass}>
             <Label htmlFor="celluleProvenance" className="text-sm font-medium ml-1">Cellule de provenance *</Label>
             <MapPin className={iconClass} />
-            <Input
-              id="celluleProvenance"
-              placeholder="Ex: Cellule UAC"
-              className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30"
-              {...register('celluleProvenance')}
-            />
+            <Select
+              value={form.watch('celluleProvenance')}
+              onValueChange={(value) => form.setValue('celluleProvenance', value)}
+            >
+              <SelectTrigger className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 bg-slate-50/30">
+                <SelectValue placeholder="Choisir une cellule" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                {CELLULES.map((cellule) => (
+                  <SelectItem key={cellule} value={cellule} className="rounded-lg focus:bg-primary/10">
+                    {cellule}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {errors.celluleProvenance && (
               <p className="text-destructive text-xs font-medium ml-1">{errors.celluleProvenance.message}</p>
             )}

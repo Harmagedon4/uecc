@@ -28,12 +28,12 @@ const step2Schema = z.object({
   universite: z.string().trim().min(2, 'Université requise').max(200),
   filiere: z.string().trim().min(2, 'Filière requise').max(100),
   anneeEtude: z.string().min(1, 'Année d\'étude requise'),
-  matricule: z.string().trim().min(1, 'Matricule requis').max(50),
+  matricule: z.string().trim().max(50).optional(),
   profession: z.string().max(100).optional(),
 });
 
 const step3Schema = z.object({
-  situationMatrimoniale: z.string().min(1, 'Situation matrimoniale requise'),
+  situationMatrimoniale: z.string().min(1, 'Statut matrimonial requis'),
   gradeEglise: z.string().min(1, 'Grade requis'),
   paroisseOrigine: z.string().trim().min(2, 'Paroisse requise').max(150),
   chargeParoisseOrigine: z.string().trim().min(2, 'Nom du chargé requis').max(100),
@@ -51,6 +51,10 @@ const step4Schema = z.object({
   anneeActivite: z.string().trim().min(4, 'Année invalide').max(4),
   superviseur: z.string().trim().min(2, 'Superviseur requis').max(100),
   presidentComite: z.string().trim().min(2, 'Président requis').max(100),
+  paroisseOrigineVille: z.string().trim().min(2, 'Ville requise').max(100),
+  paroisseOriginePays: z.string().trim().min(2, 'Pays requis').max(100),
+  paroisseAccueilVille: z.string().trim().min(2, 'Ville requise').max(100),
+  paroisseAccueilPays: z.string().trim().min(2, 'Pays requis').max(100),
   estChoriste: z.boolean(),
   roleChoriste: z.string().max(100).optional(),
   maitreChoeur: z.string().max(100).optional(),

@@ -5,6 +5,9 @@ export interface RegistrationData {
   email: string;
   nom: string;
   prenoms: string;
+  dateNaissance: string;
+  lieuNaissance: string;
+  villeResidence: string;
   telephone: string;
   celluleProvenance: string;
 
@@ -12,7 +15,7 @@ export interface RegistrationData {
   universite: string;
   filiere: string;
   anneeEtude: string;
-  matricule: string;
+  matricule?: string;
   profession?: string;
 
   // Étape 3: Engagement paroissial
@@ -33,6 +36,10 @@ export interface RegistrationData {
   anneeActivite: string;
   superviseur: string;
   presidentComite: string;
+  paroisseOrigineVille: string;
+  paroisseOriginePays: string;
+  paroisseAccueilVille: string;
+  paroisseAccueilPays: string;
   estChoriste: boolean;
   roleChoriste?: string;
   maitreChoeur?: string;
@@ -65,6 +72,7 @@ export const ANNEES_ETUDE = [
   'Master 1',
   'Master 2',
   'Doctorat',
+  'Déjà en activité',
   'Autre',
 ];
 
@@ -72,6 +80,8 @@ export const SITUATIONS_MATRIMONIALES = [
   'Célibataire',
   'Marié(e)',
   'Fiancé(e)',
+  'Union libre',
+  'En concubinage',
   'Divorcé(e)',
   'Veuf(ve)',
 ];
@@ -85,4 +95,20 @@ export const GRADES_EGLISE = [
   'Pasteur',
   'Prophète',
   'Autre',
+];
+
+export const CELLULES = [
+  'Abomey-calavi (UAC)',
+  'Parakou (UP)',
+  'Lokossa',
+  'CU Porto-Novo',
+  'Abomey',
+  'Dassa',
+  'ENEAM',
+  'FSS',
+  'Natitingou',
+  'UNA Porto-Novo',
+  'Ketou',
+  'Sakété',
+  'Autres',
 ];

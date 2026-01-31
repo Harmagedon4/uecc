@@ -21,7 +21,8 @@ const Step3Engagement = ({ form }: StepProps) => {
   const gradeEglise = watch('gradeEglise');
 
   const inputContainerClass = "relative flex flex-col gap-1.5 transition-all duration-300 group";
-  const iconClass = "absolute left-3 top-[38px] w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors z-10";
+  const iconClassLarge = "absolute left-3 top-[38px] w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors z-10";
+  const iconClassSmall = "absolute left-3 top-[30px] w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors z-10";
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -35,8 +36,8 @@ const Step3Engagement = ({ form }: StepProps) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className={inputContainerClass}>
-            <Label className="text-sm font-medium ml-1">Situation matrimoniale *</Label>
-            <Heart className={iconClass} />
+            <Label className="text-sm font-medium ml-1">Statut matrimoniale *</Label>
+            <Heart className={iconClassLarge} />
             <Select value={situationMatrimoniale} onValueChange={(v) => setValue('situationMatrimoniale', v)}>
               <SelectTrigger className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200">
                 <SelectValue placeholder="Choisir..." />
@@ -52,7 +53,7 @@ const Step3Engagement = ({ form }: StepProps) => {
 
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Grade dans l'Église *</Label>
-            <Star className={iconClass} />
+            <Star className={iconClassSmall} />
             <Select value={gradeEglise} onValueChange={(v) => setValue('gradeEglise', v)}>
               <SelectTrigger className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200">
                 <SelectValue placeholder="Votre grade" />
@@ -81,12 +82,24 @@ const Step3Engagement = ({ form }: StepProps) => {
             <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest px-1">Origine</p>
             <div className={inputContainerClass}>
               <Label className="text-xs font-semibold ml-1">Paroisse *</Label>
-              <MapPin className={iconClass} />
+              <MapPin className={iconClassSmall} />
               <Input {...register('paroisseOrigine')} placeholder="Nom de la paroisse" className="pl-10 h-11 rounded-xl bg-white" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className={inputContainerClass}>
+                <Label className="text-xs font-semibold ml-1">Ville *</Label>
+                <MapPin className={iconClassSmall} />
+                <Input {...register('paroisseOrigineVille')} placeholder="Ville" className="pl-10 h-11 rounded-xl bg-white" />
+              </div>
+              <div className={inputContainerClass}>
+                <Label className="text-xs font-semibold ml-1">Pays *</Label>
+                <MapPin className={iconClassSmall} />
+                <Input {...register('paroisseOriginePays')} placeholder="Pays" className="pl-10 h-11 rounded-xl bg-white" />
+              </div>
             </div>
             <div className={inputContainerClass}>
               <Label className="text-xs font-semibold ml-1">Chargé *</Label>
-              <UserCheck className={iconClass} />
+              <UserCheck className={iconClassSmall} />
               <Input {...register('chargeParoisseOrigine')} placeholder="Nom complet" className="pl-10 h-11 rounded-xl bg-white" />
             </div>
           </div>
@@ -96,12 +109,24 @@ const Step3Engagement = ({ form }: StepProps) => {
             <p className="text-[10px] uppercase font-black text-primary/60 tracking-widest px-1">Accueil (Université)</p>
             <div className={inputContainerClass}>
               <Label className="text-xs font-semibold ml-1">Paroisse *</Label>
-              <MapPin className={iconClass} />
+              <MapPin className={iconClassSmall} />
               <Input {...register('paroisseAccueil')} placeholder="Paroisse actuelle" className="pl-10 h-11 rounded-xl bg-white" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className={inputContainerClass}>
+                <Label className="text-xs font-semibold ml-1">Ville *</Label>
+                <MapPin className={iconClassSmall} />
+                <Input {...register('paroisseAccueilVille')} placeholder="Ville" className="pl-10 h-11 rounded-xl bg-white" />
+              </div>
+              <div className={inputContainerClass}>
+                <Label className="text-xs font-semibold ml-1">Pays *</Label>
+                <MapPin className={iconClassSmall} />
+                <Input {...register('paroisseAccueilPays')} placeholder="Pays" className="pl-10 h-11 rounded-xl bg-white" />
+              </div>
             </div>
             <div className={inputContainerClass}>
               <Label className="text-xs font-semibold ml-1">Chargé *</Label>
-              <UserCheck className={iconClass} />
+              <UserCheck className={iconClassSmall} />
               <Input {...register('chargeParoisseAccueil')} placeholder="Nom complet" className="pl-10 h-11 rounded-xl bg-white" />
             </div>
           </div>
@@ -118,32 +143,32 @@ const Step3Engagement = ({ form }: StepProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Année découverte *</Label>
-            <Calendar className={iconClass} />
+            <Calendar className={iconClassSmall} />
             <Input {...register('anneeDecouverteUECC')} placeholder="Ex: 2021" className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
           </div>
 
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Cellule actuelle *</Label>
-            <MapPin className={iconClass} />
+            <MapPin className={iconClassSmall} />
             <Input {...register('celluleUECCMilite')} placeholder="Cellule de militantisme" className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
           </div>
 
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Responsable (à l'époque) *</Label>
-            <UserCheck className={iconClass} />
+            <UserCheck className={iconClassSmall} />
             <Input {...register('responsableCelluleEpoque')} placeholder="Nom du responsable" className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
           </div>
 
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Poste occupé *</Label>
-            <Star className={iconClass} />
+            <Star className={iconClassSmall} />
             <Input {...register('posteOccupeUECC')} placeholder="Ex: Membre simple, SG..." className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
           </div>
         </div>
 
         <div className={inputContainerClass}>
           <Label className="text-sm font-medium ml-1">Responsable actuel de la cellule *</Label>
-          <UserCheck className={iconClass} />
+          <UserCheck className={iconClassSmall} />
           <Input {...register('responsableActuelCellule')} placeholder="Nom du responsable actuel" className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
         </div>
       </div>

@@ -484,28 +484,95 @@ const AdminDashboard = () => {
                   )}
                 </div>
 
-                {/* Infos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <InfoItem label="N° Dossier" value={selectedRegistration.numeroDossier} />
-                  <InfoItem label="Date" value={formatDate(selectedRegistration.dateInscription)} />
-                  <InfoItem label="Nom" value={selectedRegistration.nom} />
-                  <InfoItem label="Prénoms" value={selectedRegistration.prenoms} />
-                  <InfoItem label="Email" value={selectedRegistration.email} />
-                  <InfoItem label="Téléphone" value={selectedRegistration.telephone} />
-                  <InfoItem label="Cellule provenance" value={selectedRegistration.celluleProvenance} />
-                  <InfoItem label="Université" value={selectedRegistration.universite} />
-                  <InfoItem label="Filière" value={selectedRegistration.filiere} />
-                  <InfoItem label="Année" value={selectedRegistration.anneeEtude} />
-                  <InfoItem label="Matricule" value={selectedRegistration.matricule} />
-                  <InfoItem label="Profession" value={selectedRegistration.profession || '-'} />
-                  <InfoItem label="Situation" value={selectedRegistration.situationMatrimoniale} />
-                  <InfoItem label="Grade église" value={selectedRegistration.gradeEglise} />
-                  <InfoItem label="Paroisse origine" value={selectedRegistration.paroisseOrigine} />
-                  <InfoItem label="Paroisse accueil" value={selectedRegistration.paroisseAccueil} />
-                  <InfoItem label="Cellule UECC" value={selectedRegistration.celluleUECCMilite} />
-                  <InfoItem label="Poste UECC" value={selectedRegistration.posteOccupeUECC} />
-                  <InfoItem label="Choriste" value={selectedRegistration.estChoriste ? 'Oui' : 'Non'} />
-                  <InfoItem label="Réf. paiement" value={selectedRegistration.referencePaiement || '-'} />
+                {/* Informations générales */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Informations générales</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="N° Dossier" value={selectedRegistration.numeroDossier} />
+                    <InfoItem label="Date d'inscription" value={formatDate(selectedRegistration.dateInscription)} />
+                    <InfoItem label="Statut paiement" value={
+                      selectedRegistration.statutPaiement === 'en_attente' ? 'En attente' :
+                      selectedRegistration.statutPaiement === 'paye' ? 'Payé' : 'Validé'
+                    } />
+                  </div>
+                </div>
+
+                {/* Section 1: Identité */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Identité</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="Nom" value={selectedRegistration.nom} />
+                    <InfoItem label="Prénoms" value={selectedRegistration.prenoms} />
+                    <InfoItem label="Date de naissance" value={selectedRegistration.dateNaissance || '-'} />
+                    <InfoItem label="Lieu de naissance" value={selectedRegistration.lieuNaissance || '-'} />
+                    <InfoItem label="Ville de résidence" value={selectedRegistration.villeResidence || '-'} />
+                    <InfoItem label="Email" value={selectedRegistration.email} />
+                    <InfoItem label="Téléphone" value={selectedRegistration.telephone} />
+                    <InfoItem label="Cellule de provenance" value={selectedRegistration.celluleProvenance} />
+                  </div>
+                </div>
+
+                {/* Section 2: Parcours universitaire */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Parcours universitaire</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="Centre/Institut/Université" value={selectedRegistration.universite} />
+                    <InfoItem label="Filière d'étude" value={selectedRegistration.filiere} />
+                    <InfoItem label="Année actuelle" value={selectedRegistration.anneeEtude} />
+                    <InfoItem label="N° Matricule" value={selectedRegistration.matricule || '-'} />
+                    <InfoItem label="Profession" value={selectedRegistration.profession || '-'} />
+                  </div>
+                </div>
+
+                {/* Section 3: Engagement paroissial */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Engagement paroissial</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="Statut matrimonial" value={selectedRegistration.situationMatrimoniale} />
+                    <InfoItem label="Grade dans l'Église" value={selectedRegistration.gradeEglise} />
+                    <InfoItem label="Paroisse d'origine" value={selectedRegistration.paroisseOrigine} />
+                    <InfoItem label="Ville paroisse origine" value={selectedRegistration.paroisseOrigineVille || '-'} />
+                    <InfoItem label="Pays paroisse origine" value={selectedRegistration.paroisseOriginePays || '-'} />
+                    <InfoItem label="Chargé paroisse origine" value={selectedRegistration.chargeParoisseOrigine} />
+                    <InfoItem label="Paroisse d'accueil" value={selectedRegistration.paroisseAccueil} />
+                    <InfoItem label="Ville paroisse accueil" value={selectedRegistration.paroisseAccueilVille || '-'} />
+                    <InfoItem label="Pays paroisse accueil" value={selectedRegistration.paroisseAccueilPays || '-'} />
+                    <InfoItem label="Chargé paroisse accueil" value={selectedRegistration.chargeParoisseAccueil} />
+                    <InfoItem label="Année découverte UECC" value={selectedRegistration.anneeDecouverteUECC} />
+                    <InfoItem label="Cellule UECC actuelle" value={selectedRegistration.celluleUECCMilite} />
+                    <InfoItem label="Responsable cellule (à l'époque)" value={selectedRegistration.responsableCelluleEpoque} />
+                    <InfoItem label="Poste occupé UECC" value={selectedRegistration.posteOccupeUECC} />
+                    <InfoItem label="Responsable actuel cellule" value={selectedRegistration.responsableActuelCellule} />
+                  </div>
+                </div>
+
+                {/* Section 4: Activités & Chorale */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Activités & Chorale</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="Dernière activité UECC" value={selectedRegistration.derniereActiviteUECC} />
+                    <InfoItem label="Année de l'activité" value={selectedRegistration.anneeActivite} />
+                    <InfoItem label="Superviseur direct" value={selectedRegistration.superviseur} />
+                    <InfoItem label="Président du comité" value={selectedRegistration.presidentComite} />
+                    <InfoItem label="Est choriste" value={selectedRegistration.estChoriste ? 'Oui' : 'Non'} />
+                    {selectedRegistration.estChoriste && (
+                      <>
+                        <InfoItem label="Rôle/Pupitre" value={selectedRegistration.roleChoriste || '-'} />
+                        <InfoItem label="Maître de chœur" value={selectedRegistration.maitreChoeur || '-'} />
+                        <InfoItem label="Connaît UECC-CHOIR" value={selectedRegistration.connaissanceUECCChoir ? 'Oui' : 'Non'} />
+                        <InfoItem label="Intéressé à intégrer" value={selectedRegistration.interesseIntegrer ? 'Oui' : 'Non'} />
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Section 5: Paiement */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg border-b pb-2">Paiement</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <InfoItem label="Référence de paiement" value={selectedRegistration.referencePaiement || '-'} />
+                    <InfoItem label="Certification exactitude" value={selectedRegistration.certificationExactitude ? 'Oui' : 'Non'} />
+                  </div>
                 </div>
               </div>
             )}
