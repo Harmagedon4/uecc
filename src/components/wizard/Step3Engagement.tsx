@@ -54,16 +54,7 @@ const Step3Engagement = ({ form }: StepProps) => {
           <div className={inputContainerClass}>
             <Label className="text-sm font-medium ml-1">Grade dans l'Église *</Label>
             <Star className={iconClassSmall} />
-            <Select value={gradeEglise} onValueChange={(v) => setValue('gradeEglise', v)}>
-              <SelectTrigger className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200">
-                <SelectValue placeholder="Votre grade" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl">
-                {GRADES_EGLISE.map((g) => (
-                  <SelectItem key={g} value={g}>{g}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input {...register('gradeEglise')} placeholder="Votre grade" className="pl-10 h-12 rounded-xl bg-slate-50/30 border-slate-200" />
             {errors.gradeEglise && <p className="text-destructive text-xs ml-1">{errors.gradeEglise.message}</p>}
           </div>
         </div>

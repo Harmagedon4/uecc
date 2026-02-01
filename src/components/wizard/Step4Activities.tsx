@@ -98,11 +98,11 @@ const Step4Activities = ({ form }: StepProps) => {
           <div className="mt-8 space-y-6 animate-in zoom-in-95 fade-in duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className={inputContainerClass}>
-                <Label className="text-sm font-semibold ml-1">Rôle / Pupitre</Label>
+                <Label className="text-sm font-semibold ml-1">Que saviez-vous faire dans la chorale</Label>
                 <Mic2 className={iconClass} />
-                <Input 
+                <Input
                   {...register('roleChoriste')}
-                  placeholder="Ex: Ténor, Alto..." 
+                  placeholder="Ex: Ténor, Alto..."
                   className="pl-10 h-11 rounded-xl bg-white border-slate-200"
                 />
               </div>
