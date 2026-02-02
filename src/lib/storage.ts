@@ -1,82 +1,126 @@
-// Service de stockage localStorage pour le prototype UECC
+// Service API pour UECC
 
 import { StoredRegistration, RegistrationData } from '@/types/registration';
+import { getApiUrl } from './config';
 
-const STORAGE_KEY = 'uecc_registrations';
 const ADMIN_KEY = 'uecc_admin_session';
 
-// Génère un ID unique
-const generateId = (): string => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+// Récupère toutes les inscriptions depuis l'API
+export const getRegistrations = async (): Promise<StoredRegistration[]> => {
+  const response = await fetch(getApiUrl('/registrations'), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.registrations || [];
 };
 
-// Génère un numéro de dossier lisible
-const generateNumeroDossier = (): string => {
-  const year = new Date().getFullYear();
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `UECC-${year}-${random}`;
-};
 
-// Récupère toutes les inscriptions
-export const getRegistrations = (): StoredRegistration[] => {
+
+// Met à jour le statut de paiement via API
+export const updatePaymentStatus = async (
+  id: string,
+  status: 'en_attente' | 'paye' | 'valide'
+): Promise<boolean> => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
+    const response = await fetch(getApiUrl(`/registrations/${id}/paiement`), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ statutPaiement: status }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du statut:', error);
+    return false;
   }
 };
 
-// Vérifie si un email existe déjà
-export const emailExists = (email: string): boolean => {
-  const registrations = getRegistrations();
-  return registrations.some(r => r.email.toLowerCase() === email.toLowerCase());
+// Met à jour une inscription complète via API
+export const updateRegistration = async (
+  id: string,
+  updates: Partial<StoredRegistration>
+): Promise<boolean> => {
+  try {
+    const response = await fetch(getApiUrl(`/registrations/${id}`), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l\'inscription:', error);
+    return false;
+  }
 };
 
-// Ajoute une nouvelle inscription
-export const addRegistration = (data: RegistrationData): StoredRegistration => {
-  const registrations = getRegistrations();
-  
-  const newRegistration: StoredRegistration = {
-    ...data,
-    id: generateId(),
-    numeroDossier: generateNumeroDossier(),
-    dateInscription: new Date().toISOString(),
-    statutPaiement: 'en_attente',
-  };
+// --- GESTION DU STATUT DU SITE ---
 
-  registrations.push(newRegistration);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(registrations));
-  
-  return newRegistration;
+export const getSiteStatus = async (): Promise<boolean> => {
+  try {
+    // On suppose un endpoint /settings/status
+    const response = await fetch(getApiUrl('/settings/status'));
+    if (!response.ok) return true; // Par défaut actif si l'endpoint n'existe pas encore
+    const data = await response.json();
+    return data.isActive !== false;
+  } catch (error) {
+    console.error('Erreur récupération statut site:', error);
+    return true; // Fallback: site actif en cas d'erreur
+  }
 };
 
-// Met à jour le statut de paiement
-export const updatePaymentStatus = (
-  id: string, 
-  status: 'en_attente' | 'paye' | 'valide'
-): boolean => {
-  const registrations = getRegistrations();
-  const index = registrations.findIndex(r => r.id === id);
-  
-  if (index === -1) return false;
-  
-  registrations[index].statutPaiement = status;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(registrations));
-  
-  return true;
+export const updateSiteStatus = async (isActive: boolean): Promise<boolean> => {
+  try {
+    const response = await fetch(getApiUrl('/settings/status'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isActive }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Erreur mise à jour statut site:', error);
+    return false;
+  }
 };
 
-// Supprime une inscription
-export const deleteRegistration = (id: string): boolean => {
-  const registrations = getRegistrations();
-  const filtered = registrations.filter(r => r.id !== id);
-  
-  if (filtered.length === registrations.length) return false;
-  
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-  return true;
-};
+
 
 // Auth admin (POC simple)
 const ADMIN_CREDENTIALS = {

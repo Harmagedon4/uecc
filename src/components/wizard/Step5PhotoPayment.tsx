@@ -19,19 +19,28 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
 
   // On observe les valeurs en temps réel
   const certificationExactitude = watch('certificationExactitude');
-  const photoUrl = watch('photoUrl');
+  const photo = watch('photo');
 
-  // Synchronisation de l'aperçu si photoUrl existe déjà (ex: retour arrière)
+  // Synchronisation de l'aperçu si photo existe déjà (ex: retour arrière)
   useEffect(() => {
-    if (photoUrl && !previewUrl) {
-      setPreviewUrl(photoUrl);
+    if (photo && !previewUrl) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreviewUrl(result);
+      };
+      reader.readAsDataURL(photo);
     }
-  }, [photoUrl, previewUrl]);
+  }, [photo, previewUrl]);
 
   useEffect(() => {
     const successHandler = (response: any) => onPaymentSuccess(response);
+    // @ts-ignore
     addKkiapayListener("success", successHandler);
-    return () => removeKkiapayListener("success", successHandler);
+    return () => {
+      // @ts-ignore
+      removeKkiapayListener("success", successHandler);
+    };
   }, [onPaymentSuccess]);
 
   const handlePayment = () => {
@@ -51,7 +60,7 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setPreviewUrl(result);
-        setValue('photoUrl', result, { shouldValidate: true }); // On force la validation immédiate
+        setValue('photo', file, { shouldValidate: true }); // On force la validation immédiate
       };
       reader.readAsDataURL(file);
     }
@@ -73,15 +82,15 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
         </div>
 
         <div className={`group relative border-2 border-dashed rounded-[2.5rem] transition-all duration-300 ${
-          photoUrl ? 'border-green-400 bg-green-50/30' : errors.photoUrl ? 'border-destructive bg-destructive/5' : 'border-slate-200 hover:border-primary/40 bg-slate-50/50'
+          photo ? 'border-green-400 bg-green-50/30' : errors.photo ? 'border-destructive bg-destructive/5' : 'border-slate-200 hover:border-primary/40 bg-slate-50/50'
         }`}>
-          {photoUrl ? (
+          {photo ? (
             <div className="p-4 flex flex-col items-center">
               <div className="relative">
-                <img src={previewUrl || photoUrl} alt="Preview" className="w-48 h-48 object-cover rounded-3xl shadow-2xl border-4 border-white" />
-                <button 
+                <img src={previewUrl} alt="Preview" className="w-48 h-48 object-cover rounded-3xl shadow-2xl border-4 border-white" />
+                <button
                   type="button"
-                  onClick={() => { setPreviewUrl(null); setValue('photoUrl', '', { shouldValidate: true }); }}
+                  onClick={() => { setPreviewUrl(null); setValue('photo', null, { shouldValidate: true }); }}
                   className="absolute -top-2 -right-2 bg-white text-destructive p-2 rounded-full shadow-lg hover:bg-destructive hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
@@ -106,7 +115,7 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
         </div>
         
         {/* Correction 2: L'alerte ne s'affiche QUE s'il y a une erreur ET que le champ est vide */}
-        {errors.photoUrl && !photoUrl && (
+        {errors.photo && !photo && (
           <p className="text-destructive text-xs font-semibold text-center animate-in fade-in flex items-center justify-center gap-1">
             <AlertCircle className="w-3 h-3" /> Photo obligatoire
           </p>

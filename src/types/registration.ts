@@ -47,7 +47,8 @@ export interface RegistrationData {
   interesseIntegrer?: boolean;
 
   // Étape 5: Photo & Paiement
-  photoUrl: string;
+  photo: File | null;
+  photoUrl?: string;
   referencePaiement?: string;
   certificationExactitude: boolean;
 

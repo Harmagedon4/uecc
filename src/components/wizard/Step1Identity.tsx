@@ -13,9 +13,10 @@ import {
 
 interface StepProps {
   form: UseFormReturn<RegistrationData>;
+  onEmailBlur?: () => void;
 }
 
-const Step1Identity = ({ form }: StepProps) => {
+const Step1Identity = ({ form, onEmailBlur }: StepProps) => {
   const { register, formState: { errors } } = form;
 
   // Classe utilitaire pour les inputs répétitifs
@@ -45,6 +46,7 @@ const Step1Identity = ({ form }: StepProps) => {
             placeholder="etudiant@exemple.com"
             className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-slate-50/30"
             {...register('email')}
+            onBlur={onEmailBlur}
           />
           {errors.email && (
             <p className="text-destructive text-xs font-medium ml-1 animate-in fade-in">{errors.email.message}</p>

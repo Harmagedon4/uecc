@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { RegistrationData } from '@/types/registration';
-import { addRegistration, emailExists } from '@/lib/storage';
+import { getApiUrl } from '@/lib/config';
+import { getSiteStatus } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send, Loader2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ProgressBar from '@/components/ProgressBar';
 import Step1Identity from './Step1Identity';
@@ -20,6 +21,9 @@ const step1Schema = z.object({
   email: z.string().trim().email('Email invalide').max(255),
   nom: z.string().trim().min(2, 'Nom requis (min 2 caractères)').max(100),
   prenoms: z.string().trim().min(2, 'Prénoms requis').max(150),
+  dateNaissance: z.string().min(1, 'Date de naissance requise'),
+  lieuNaissance: z.string().trim().min(2, 'Lieu de naissance requis').max(255),
+  villeResidence: z.string().trim().min(2, 'Ville de résidence requise').max(255),
   telephone: z.string().trim().min(8, 'Téléphone invalide').max(20),
   celluleProvenance: z.string().trim().min(2, 'Cellule requise').max(100),
 });
@@ -39,10 +43,6 @@ const step3Schema = z.object({
   chargeParoisseOrigine: z.string().trim().min(2, 'Nom du chargé requis').max(100),
   paroisseAccueil: z.string().trim().min(2, 'Paroisse requise').max(150),
   chargeParoisseAccueil: z.string().trim().min(2, 'Nom du chargé requis').max(100),
-  paroisseOrigineVille: z.string().trim().min(2, 'Ville requise').max(100),
-  paroisseOriginePays: z.string().trim().min(2, 'Pays requis').max(100),
-  paroisseAccueilVille: z.string().trim().min(2, 'Ville requise').max(100),
-  paroisseAccueilPays: z.string().trim().min(2, 'Pays requis').max(100),
   anneeDecouverteUECC: z.string().trim().min(4, 'Année invalide').max(4),
   celluleUECCMilite: z.string().trim().min(2, 'Cellule requise').max(100),
   responsableCelluleEpoque: z.string().trim().min(2, 'Nom requis').max(100),
@@ -67,7 +67,9 @@ const step4Schema = z.object({
 });
 
 const step5Schema = z.object({
-  photoUrl: z.string().min(1, 'Photo obligatoire'),
+  photo: z.any().refine((val) => val instanceof File, {
+    message: 'Photo obligatoire',
+  }),
   referencePaiement: z.string().max(100).optional(),
   certificationExactitude: z.literal(true, {
     errorMap: () => ({ message: 'Vous devez certifier l\'exactitude des informations' }),
@@ -88,6 +90,7 @@ const RegistrationWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [isSiteActive, setIsSiteActive] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -98,6 +101,9 @@ const RegistrationWizard = () => {
       email: '',
       nom: '',
       prenoms: '',
+      dateNaissance: '',
+      lieuNaissance: '',
+      villeResidence: '',
       telephone: '',
       celluleProvenance: '',
       universite: '',
@@ -125,25 +131,56 @@ const RegistrationWizard = () => {
       maitreChoeur: '',
       connaissanceUECCChoir: false,
       interesseIntegrer: false,
-      photoUrl: '',
+      photo: null as File | null,
       referencePaiement: '',
       certificationExactitude: false,
     },
   });
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      const active = await getSiteStatus();
+      setIsSiteActive(active);
+    };
+    checkStatus();
+  }, []);
+
+  const checkEmailExists = async (email: string): Promise<boolean> => {
+    if (!email || !email.includes('@')) return false;
+
+    try {
+      const response = await fetch(getApiUrl(`/registrations/email-exists?email=${encodeURIComponent(email)}`), {
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.exists || false;
+      }
+      return false;
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'email:', error);
+      return false;
+    }
+  };
+
+  const handleEmailBlur = async () => {
+    const email = form.getValues('email');
+    if (email) {
+      const exists = await checkEmailExists(email);
+      if (exists) {
+        form.setError('email', { message: 'Cet email est déjà utilisé' });
+      } else {
+        // Clear any existing error
+        form.clearErrors('email');
+      }
+    }
+  };
+
   const validateCurrentStep = async (): Promise<boolean> => {
     const currentSchema = stepSchemas[currentStep - 1];
     const fieldsToValidate = Object.keys(currentSchema.shape);
     const result = await form.trigger(fieldsToValidate as any);
-
-    // Vérification email unique à l'étape 1
-    if (currentStep === 1 && result) {
-      const email = form.getValues('email');
-      if (emailExists(email)) {
-        form.setError('email', { message: 'Cet email est déjà utilisé' });
-        return false;
-      }
-    }
 
     return result;
   };
@@ -173,29 +210,52 @@ const RegistrationWizard = () => {
 
   const handleSubmit = async (data: RegistrationData) => {
     setIsSubmitting(true);
-    
+
     try {
-      // Simulation d'un délai réseau
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      const registration = addRegistration(data);
-      
-      toast({
-        title: '✅ Inscription réussie !',
-        description: `Votre numéro de dossier : ${registration.numeroDossier}`,
+      // Create FormData for multipart/form-data submission
+      const formData = new FormData();
+
+      // Add photo file
+      if (data.photo) {
+        formData.append('photo', data.photo);
+      }
+
+      // Add other form fields
+      Object.entries(data).forEach(([key, value]) => {
+        if (key !== 'photo' && key !== 'photoUrl' && value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
       });
 
-      navigate('/confirmation', { 
-        state: { 
-          numeroDossier: registration.numeroDossier,
+      // Send to backend
+      const response = await fetch(getApiUrl('/registrations'), {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Erreur serveur' }));
+        throw new Error(errorData.message || 'Erreur lors de l\'inscription');
+      }
+
+      const result = await response.json();
+
+      toast({
+        title: '✅ Inscription réussie !',
+        description: `Votre numéro de dossier : ${result.numero_dossier}`,
+      });
+
+      navigate('/confirmation', {
+        state: {
+          numeroDossier: result.numero_dossier,
           nom: data.nom,
-          prenoms: data.prenoms 
-        } 
+          prenoms: data.prenoms
+        }
       });
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Une erreur est survenue. Veuillez réessayer.',
+        description: error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.',
         variant: 'destructive',
       });
     } finally {
@@ -219,6 +279,32 @@ const RegistrationWizard = () => {
         return null;
     }
   };
+
+  if (isSiteActive === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (isSiteActive === false) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center p-4">
+        <div className="card-uecc max-w-md w-full text-center p-10 space-y-6 shadow-xl">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-slate-400" />
+          </div>
+          <div className="space-y-3">
+            <h1 className="text-2xl font-bold text-slate-900">Accès Restreint</h1>
+            <p className="text-slate-600 leading-relaxed">
+              Le site est actuellement désactivé. Veuillez contacter le président pour son activation.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 py-8 px-4">

@@ -166,14 +166,14 @@ const AdminLogin = () => {
           </div>
 
           {/* Footer Card - POC Hint */}
-          <div className="bg-slate-50/80 p-6 border-t border-slate-100">
+          {/* <div className="bg-slate-50/80 p-6 border-t border-slate-100">
             <div className="flex items-start gap-3 p-3 bg-white/50 rounded-xl border border-slate-200">
               <div className="p-1.5 bg-primary/10 rounded-lg text-primary font-bold text-[10px]">POC</div>
               <p className="text-[11px] leading-relaxed text-slate-500">
                 Utilisez <span className="font-bold text-slate-700">admin@uecc.bj</span> et <span className="font-bold text-slate-700">UECCadmin2025!</span> pour tester les fonctionnalités de gestion.
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer externe */}
