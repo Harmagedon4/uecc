@@ -1,7 +1,7 @@
 // Configuration de l'application UECC
 export const config = {
   // URL de base de l'API backend
-  API_BASE_URL: 'https://uecc-backend.vercel.app/',
+  API_BASE_URL: 'https://uecc-backend.vercel.app',
 
   // Endpoints API
   endpoints: {
