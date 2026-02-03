@@ -47,8 +47,8 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
     openKkiapayWidget({
       amount: 1500,
       api_key: "cb68ee90fdf211f0a625e1f4e1128ff2",
-      sandbox: true,
-      phone: "22997000000",
+      sandbox: false,
+      phone: "",
       name: "Inscription UECC",
       data: "Frais de Badge",
     });
