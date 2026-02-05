@@ -4,6 +4,7 @@ import { RegistrationData } from '@/types/registration';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Upload, Camera, AlertCircle, CreditCard, CheckCircle2, X } from 'lucide-react';
 import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener } from 'kkiapay';
 
@@ -20,6 +21,7 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
   // On observe les valeurs en temps réel
   const certificationExactitude = watch('certificationExactitude');
   const photo = watch('photo');
+  const referencePaiement = watch('referencePaiement');
 
   // Synchronisation de l'aperçu si photo existe déjà (ex: retour arrière)
   useEffect(() => {
@@ -47,7 +49,7 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
     openKkiapayWidget({
       amount: 1500,
       api_key: "pk_cb747c83919bc4f1b4dd0aff5bbf1eede88e0fa85842ee874cc505bc460317c6",
-      sandbox: true,
+      sandbox: false,
       phone: "",
       name: "Inscription UECC",
       data: "Frais de Badge",
@@ -65,6 +67,17 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
       reader.readAsDataURL(file);
     }
   }, [setValue]);
+
+  // Commenter le paiement par Kkiapay
+  // Afficher les numéros de dépôt :
+  const depotNumbers = {
+    moov: '0194298459',
+    mtn: '0167474647',
+    celtis: '0140656873'
+  };
+
+  // Nom de confirmation du dépôt
+  const confirmationName = 'AMANDJI Pricette';
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -123,7 +136,8 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
       </div>
 
       {/* --- SECTION PAIEMENT --- */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-slate-900 text-white p-8 shadow-2xl">
+      {/* Commenter le paiement par Kkiapay */}
+      {/* <div className="relative overflow-hidden rounded-[2rem] bg-slate-900 text-white p-8 shadow-2xl">
         <div className="absolute top-0 right-0 p-8 opacity-10">
           <CreditCard className="w-32 h-32" />
         </div>
@@ -162,7 +176,7 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
              <div className="h-6 w-10 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">VISA</div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* --- CERTIFICATION --- */}
       <div className={`p-6 rounded-2xl transition-all duration-300 ${certificationExactitude ? 'bg-primary/5 border border-primary/20 shadow-sm' : errors.certificationExactitude ? 'bg-destructive/5 border border-destructive/20' : 'bg-slate-50 border border-slate-100'}`}>
@@ -189,6 +203,59 @@ const Step5PhotoPayment = ({ form, isPaid, onPaymentSuccess }: StepProps) => {
             <AlertCircle className="w-3 h-3" /> Vous devez certifier l'exactitude des informations
           </p>
         )}
+      </div>
+
+      {/* --- NUMÉROS DE DÉPÔT --- */}
+      <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">Numéros de dépôt</h3>
+        <p className="text-sm text-slate-600">Pour le paiement par Moov, utilisez le numéro suivant :</p>
+        <p className="text-xl font-black text-primary">{depotNumbers.moov}</p>
+
+        <div className="border-t border-slate-200 my-4"></div>
+
+        <p className="text-sm text-slate-600">Pour le paiement par MTN, utilisez le numéro suivant :</p>
+        <p className="text-xl font-black text-primary">{depotNumbers.mtn}</p>
+
+        <div className="border-t border-slate-200 my-4"></div>
+
+        <p className="text-sm text-slate-600">Pour le paiement par Celtis, utilisez le numéro suivant :</p>
+        <p className="text-xl font-black text-primary">{depotNumbers.celtis}</p>
+
+        <div className="border-t border-slate-200 my-4"></div>
+
+        <p className="text-sm text-slate-600">Nom de confirmation du dépôt :</p>
+        <p className="text-xl font-black text-primary">{confirmationName}</p>
+      </div>
+
+      {/* --- RÉFÉRENCE DE PAIEMENT --- */}
+      <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">Référence de paiement</h3>
+        <p className="text-sm text-slate-600 mb-4">Après avoir effectué le dépôt, entrez la référence de paiement pour valider votre inscription.</p>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="referencePaiement" className="text-sm font-bold text-slate-800">
+              Référence de paiement
+            </Label>
+            <Input
+              id="referencePaiement"
+              type="text"
+              placeholder="Entrez la référence de paiement"
+              value={referencePaiement || ''}
+              onChange={(e) => setValue('referencePaiement', e.target.value, { shouldValidate: true })}
+              className="mt-2"
+            />
+          </div>
+          {referencePaiement && (
+            <Button
+              type="button"
+              onClick={() => onPaymentSuccess({ reference: referencePaiement })}
+              className="w-full h-14 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]"
+            >
+              <CheckCircle2 className="w-5 h-5 mr-3" />
+              Valider le paiement
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
