@@ -361,7 +361,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-4 mx-4">
+            {/* <div className="flex items-center gap-4 mx-4">
               <div className="flex items-center gap-2 bg-background/50 px-3 py-1.5 rounded-full border border-border">
                 <Power className={`w-4 h-4 ${isSiteActive ? 'text-green-500' : 'text-red-500'}`} />
                 <Label htmlFor="site-status" className="text-sm font-medium cursor-pointer mr-2">
@@ -369,7 +369,7 @@ const AdminDashboard = () => {
                 </Label>
                 <Switch id="site-status" checked={isSiteActive} onCheckedChange={handleToggleSite} />
               </div>
-            </div>
+            </div> */}
 
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
