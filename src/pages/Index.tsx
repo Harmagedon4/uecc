@@ -1,4 +1,5 @@
 import { Ban, Lock, AlertTriangle } from 'lucide-react';
+import ueccLogo from '@/assets/uecc-logo.jpeg';
 
 const Index = () => {
   return (
@@ -9,6 +10,17 @@ const Index = () => {
       </div>
 
       <div className="max-w-4xl w-full relative z-10 flex flex-col items-center text-center">
+        
+        {/* Identification du Site */}
+        <div className="flex flex-col items-center gap-4 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+          <div className="relative">
+            <div className="absolute inset-0 bg-white/5 rounded-full blur-2xl" />
+            <img src={ueccLogo} alt="Logo UECC" className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-full border-4 border-red-900/50 bg-white p-2 relative z-10 shadow-2xl" />
+          </div>
+          <h2 className="text-xl md:text-2xl font-serif font-bold text-slate-300 tracking-wide uppercase drop-shadow-md">
+            Union des Étudiants Chrétiens Célestes
+          </h2>
+        </div>
         
         <div className="relative mb-8">
           <div className="absolute inset-0 bg-red-600 blur-[60px] opacity-40 animate-pulse" />
@@ -53,6 +65,7 @@ const Index = () => {
 };
 
 export default Index;
+
 
 // import { Link } from 'react-router-dom';
 // import { ArrowRight, Users, Shield, CheckCircle2, CreditCard, IdCard } from 'lucide-react';
